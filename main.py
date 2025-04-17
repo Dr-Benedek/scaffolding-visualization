@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.animation import FuncAnimation
+from matplotlib.widgets import Button
 
 angle_ground_deg = 36.87  
 angle_ground_rad = np.radians(angle_ground_deg)
@@ -132,237 +133,262 @@ segment_distances = {
     ("X'", "D'"): 2.8
 }
 
-def create_static_plot(show_distances=True):
-    fig = plt.figure(figsize=(12, 10))
-    ax = fig.add_subplot(111, projection='3d')
-    
-    segments = [
-        ('A', "A'"),  
-        ('A', 'B'),   
-        ("A'", "B'"), 
-        ('C', 'D'),   
-        ("C'", "D'"), 
-        ('A', 'C'),
-        ("A'", "C'"),
-        ('B', 'X'),
-        ("B'", "X'"),
-        ('C', 'X'),
-        ("C'", "X'"),
-        ('C', 'F'),
-        ("C'", "F'"),
-        ('F', 'D'),
-        ("F'", "D'"),
-        ('E', 'F'),
-        ("E'", "F'"),
-        ('E', 'X'),
-        ("E'", "X'"),
-        ('X', 'D'),
-        ("X'", "D'"),
-        ('B', "B'"),
-        #('C', "C'"),
-        ('D', "D'"),
-        #('E', "E'"),
-        #('F', "F'"),
-        ('X', "X'")
-    ]
-    
-    visible_lines = [('A', "A'"), ('A', 'B'), ("A'", "B'"), ('C', 'D'), ("C'", "D'")]
-    underground_points = ['B', "B'", 'X', "X'", 'D', "D'"]
-    
-    for s in segments:
-        p1, p2 = s
-        x = [points[p1][0], points[p2][0]]
-        y = [points[p1][1], points[p2][1]]
-        z = [points[p1][2], points[p2][2]]
+class ScaffoldingVisualization:
+    def __init__(self):
+        self.fig = plt.figure(figsize=(12, 11))
         
-        if s in visible_lines:
-            ax.plot(x, y, z, 'r-', linewidth=3)  
-        elif p1 in underground_points and p2 in underground_points:
-            ax.plot(x, y, z, 'k--', linewidth=1)  
-        else:
-            ax.plot(x, y, z, 'b-', linewidth=1.5)
-
-    if show_distances and s in segment_distances:
-            
-            mid_x = (x[0] + x[1]) / 2
-            mid_y = (y[0] + y[1]) / 2
-            mid_z = (z[0] + z[1]) / 2
-            
-            
-            offset = 0.15
-            label_x = mid_x
-            label_y = mid_y
-            label_z = mid_z + offset
-            
-            
-            distance_text = f"{segment_distances[s]:.1f}m"
-            
-            
-            ax.text(label_x, label_y, label_z, distance_text,
-                    fontsize=9, ha='center', va='center',
-                    bbox=dict(facecolor='white', alpha=0.7, pad=2, edgecolor='none'))
-    
-    x_ground = np.linspace(-1, 3, 5)
-    y_ground = np.linspace(-1, 4, 7)
-    X_ground, Y_ground = np.meshgrid(x_ground, y_ground)
-    Z_ground = np.ones_like(X_ground) * -2.5
-    ax.plot_surface(X_ground, Y_ground, Z_ground, alpha=0.2, color='brown')
-    
-    for p, coords in points.items():
+        self.ax = self.fig.add_subplot(111, projection='3d')
         
-        if p in underground_points:
-            ax.scatter(coords[0], coords[1], coords[2], color='gray', s=80, alpha=0.7, zorder=10)
-        else:
-            ax.scatter(coords[0], coords[1], coords[2], color='black', s=80, zorder=10)
+        self.show_distances = True
         
+        self.segments = [
+            ('A', "A'"),  
+            ('A', 'B'),   
+            ("A'", "B'"), 
+            ('C', 'D'),   
+            ("C'", "D'"), 
+            ('A', 'C'),
+            ("A'", "C'"),
+            ('B', 'X'),
+            ("B'", "X'"),
+            ('C', 'X'),
+            ("C'", "X'"),
+            ('C', 'F'),
+            ("C'", "F'"),
+            ('F', 'D'),
+            ("F'", "D'"),
+            ('E', 'F'),
+            ("E'", "F'"),
+            ('E', 'X'),
+            ("E'", "X'"),
+            ('X', 'D'),
+            ("X'", "D'"),
+            ('B', "B'"),
+            #('C', "C'"),
+            ('D', "D'"),
+            #('E', "E'"),
+            #('F', "F'"),
+            ('X', "X'")
+        ]
         
-        offset = 0.1
-        label_x = coords[0]
-        label_y = coords[1]
-        label_z = coords[2] + offset
+        self.visible_lines = [('A', "A'"), ('A', 'B'), ("A'", "B'"), ('C', 'D'), ("C'", "D'")]
+        self.underground_points = ['B', "B'", 'X', "X'", 'D', "D'"]
         
-        ax.text(label_x, label_y, label_z, p, fontsize=7.5, fontweight='bold', ha='center', va='center',
-                bbox=dict(facecolor='white', alpha=0.9, pad=2, edgecolor='black'), zorder=11)
+        plt.subplots_adjust(bottom=0.15)
+        
+        self.button_ax = plt.axes([0.7, 0.05, 0.25, 0.075])  # [left, bottom, width, height]
+        self.button = Button(self.button_ax, 'Toggle Distances')
+        self.button.on_clicked(self.toggle_distances)
+        
+        self.update_plot()
     
-    ax.grid(True)
+    def toggle_distances(self, event):
+        self.show_distances = not self.show_distances
     
-    ax.set_xlabel('X (m)')
-    ax.set_ylabel('Y (m)')
-    ax.set_zlabel('Z (m)')
-    ax.set_title('3D Scaffolding Structure')
+        self.button.label.set_text('Hide Distances' if self.show_distances else 'Show Distances')
+        
+        self.update_plot()
     
-    
-    ax.view_init(elev=25, azim=30)
-    
-    
-    ax.set_xlim(-1, 3)
-    ax.set_ylim(-1, 4)
-    ax.set_zlim(-4, 1)
-    
-    plt.tight_layout()
-    return fig, ax
-
-def create_animated_plot(show_distances=True):
-    fig = plt.figure(figsize=(12, 10))
-    ax = fig.add_subplot(111, projection='3d')
-    
-    segments = [
-        ('A', "A'"),  
-        ('A', 'B'),   
-        ("A'", "B'"), 
-        ('C', 'D'),   
-        ("C'", "D'"), 
-        ('A', 'C'),
-        ("A'", "C'"),
-        ('B', 'X'),
-        ("B'", "X'"),
-        ('C', 'X'),
-        ("C'", "X'"),
-        ('C', 'F'),
-        ("C'", "F'"),
-        ('F', 'D'),
-        ("F'", "D'"),
-        ('E', 'F'),
-        ("E'", "F'"),
-        ('E', 'X'),
-        ("E'", "X'"),
-        ('X', 'D'),
-        ("X'", "D'"),
-        ('B', "B'"),
-        #('C', "C'"),
-        ('D', "D'"),
-        #('E', "E'"),
-        #('F', "F'"),
-        ('X', "X'")
-    ]
-    
-    visible_lines = [('A', "A'"), ('A', 'B'), ("A'", "B'"), ('C', 'D'), ("C'", "D'")]
-    underground_points = ['B', "B'", 'X', "X'", 'D', "D'"]
-    
-    def update(angle):
-        ax.clear()
-    
-        for s in segments:
+    def update_plot(self):
+        self.ax.clear()
+        
+        for s in self.segments:
             p1, p2 = s
             x = [points[p1][0], points[p2][0]]
             y = [points[p1][1], points[p2][1]]
             z = [points[p1][2], points[p2][2]]
             
-            if s in visible_lines:
-                ax.plot(x, y, z, 'r-', linewidth=3)  
-            elif p1 in underground_points and p2 in underground_points:
-                ax.plot(x, y, z, 'k--', linewidth=1)  
+            if s in self.visible_lines:
+                self.ax.plot(x, y, z, 'r-', linewidth=3)  
+            elif p1 in self.underground_points and p2 in self.underground_points:
+                self.ax.plot(x, y, z, 'k--', linewidth=1)  
             else:
-                ax.plot(x, y, z, 'b-', linewidth=1.5)  
-        
-        if show_distances and s in segment_distances:
-                
+                self.ax.plot(x, y, z, 'b-', linewidth=1.5)  
+            
+            if self.show_distances and s in segment_distances:
                 mid_x = (x[0] + x[1]) / 2
                 mid_y = (y[0] + y[1]) / 2
                 mid_z = (z[0] + z[1]) / 2
-                
                 
                 offset = 0.15
                 label_x = mid_x
                 label_y = mid_y
                 label_z = mid_z + offset
                 
-                
                 distance_text = f"{segment_distances[s]:.1f}m"
                 
-                
-                ax.text(label_x, label_y, label_z, distance_text,
+                self.ax.text(label_x, label_y, label_z, distance_text, 
                         fontsize=9, ha='center', va='center',
                         bbox=dict(facecolor='white', alpha=0.7, pad=2, edgecolor='none'))
-                
+        
         x_ground = np.linspace(-1, 3, 5)
-        y_ground = np.linspace(-1, 5, 7)
+        y_ground = np.linspace(-1, 4, 7)
         X_ground, Y_ground = np.meshgrid(x_ground, y_ground)
         Z_ground = np.ones_like(X_ground) * -2.5
-        ax.plot_surface(X_ground, Y_ground, Z_ground, alpha=0.2, color='brown')
-
+        self.ax.plot_surface(X_ground, Y_ground, Z_ground, alpha=0.2, color='brown')
+        
         for p, coords in points.items():
-            
-            if p in underground_points:
-                ax.scatter(coords[0], coords[1], coords[2], color='gray', s=80, alpha=0.7, zorder=10)
+            if p in self.underground_points:
+                self.ax.scatter(coords[0], coords[1], coords[2], color='gray', s=80, alpha=0.7, zorder=10)
             else:
-                ax.scatter(coords[0], coords[1], coords[2], color='black', s=80, zorder=10)
-            
+                self.ax.scatter(coords[0], coords[1], coords[2], color='black', s=80, zorder=10)
             
             offset = 0.1
             label_x = coords[0]
             label_y = coords[1]
             label_z = coords[2] + offset
-        
-            ax.text(label_x, label_y, label_z, p, fontsize=7.5, fontweight='bold', ha='center', va='center',
+            
+            self.ax.text(label_x, label_y, label_z, p, fontsize=7.5, fontweight='bold', ha='center', va='center',
                     bbox=dict(facecolor='white', alpha=0.9, pad=2, edgecolor='black'), zorder=11)
         
+        self.ax.grid(True)
+        self.ax.set_xlabel('X (m)')
+        self.ax.set_ylabel('Y (m)')
+        self.ax.set_zlabel('Z (m)')
+        self.ax.set_title('3D Scaffolding Structure')
+        self.ax.view_init(elev=25, azim=30)
+        self.ax.set_xlim(-1, 3)
+        self.ax.set_ylim(-1, 4)
+        self.ax.set_zlim(-4, 1)
         
-        
-        
-        ax.grid(True)
-        
-        ax.set_xlabel('X (m)')
-        ax.set_ylabel('Y (m)')
-        ax.set_zlabel('Z (m)')
-        ax.set_title('3D Scaffolding Structure')
-        ax.view_init(elev=25, azim=angle)
-        ax.set_xlim(-1, 3)
-        ax.set_ylim(-1, 4)
-        ax.set_zlim(-4, 1)
-        
-        return ax
+        self.fig.canvas.draw_idle()
     
-    angles = np.linspace(0, 360, 120)
-    anim = FuncAnimation(fig, update, frames=angles, interval=50, blit=False)
+    def show(self):
+        plt.tight_layout()
+        plt.show()
+
+class AnimatedScaffoldingVisualization:
+    def __init__(self):
+        self.fig = plt.figure(figsize=(12, 11))
+        
+        self.ax = self.fig.add_subplot(111, projection='3d')
+        
+        self.show_distances = True
+        
+        self.segments = [
+            ('A', "A'"),  
+            ('A', 'B'),   
+            ("A'", "B'"), 
+            ('C', 'D'),   
+            ("C'", "D'"), 
+            ('A', 'C'),
+            ("A'", "C'"),
+            ('B', 'X'),
+            ("B'", "X'"),
+            ('C', 'X'),
+            ("C'", "X'"),
+            ('C', 'F'),
+            ("C'", "F'"),
+            ('F', 'D'),
+            ("F'", "D'"),
+            ('E', 'F'),
+            ("E'", "F'"),
+            ('E', 'X'),
+            ("E'", "X'"),
+            ('X', 'D'),
+            ("X'", "D'"),
+            ('B', "B'"),
+            ('D', "D'"),
+            ('X', "X'")
+        ]
+        
+        self.visible_lines = [('A', "A'"), ('A', 'B'), ("A'", "B'"), ('C', 'D'), ("C'", "D'")]
+        self.underground_points = ['B', "B'", 'X', "X'", 'D', "D'"]
+        
+        plt.subplots_adjust(bottom=0.15)
+        
+        self.button_ax = plt.axes([0.7, 0.05, 0.25, 0.075])
+        self.button = Button(self.button_ax, 'Toggle Distances')
+        self.button.on_clicked(self.toggle_distances)
+        
+        self.angles = np.linspace(0, 360, 120)
+        self.anim = FuncAnimation(
+            self.fig, 
+            self.update_plot, 
+            frames=self.angles, 
+            interval=50, 
+            blit=False
+        )
     
-    return fig, anim
+    def toggle_distances(self, event):
+        self.show_distances = not self.show_distances
+        
+        self.button.label.set_text('Hide Distances' if self.show_distances else 'Show Distances')
+        
+    
+    def update_plot(self, angle):
+        self.ax.clear()
+        
+        for s in self.segments:
+            p1, p2 = s
+            x = [points[p1][0], points[p2][0]]
+            y = [points[p1][1], points[p2][1]]
+            z = [points[p1][2], points[p2][2]]
+            
+            if s in self.visible_lines:
+                self.ax.plot(x, y, z, 'r-', linewidth=3)  
+            elif p1 in self.underground_points and p2 in self.underground_points:
+                self.ax.plot(x, y, z, 'k--', linewidth=1)  
+            else:
+                self.ax.plot(x, y, z, 'b-', linewidth=1.5)  
+            
+            if self.show_distances and s in segment_distances:
+                mid_x = (x[0] + x[1]) / 2
+                mid_y = (y[0] + y[1]) / 2
+                mid_z = (z[0] + z[1]) / 2
+                
+                offset = 0.15
+                label_x = mid_x
+                label_y = mid_y
+                label_z = mid_z + offset
+                
+                distance_text = f"{segment_distances[s]:.1f}m"
+                
+                self.ax.text(label_x, label_y, label_z, distance_text, 
+                        fontsize=9, ha='center', va='center',
+                        bbox=dict(facecolor='white', alpha=0.7, pad=2, edgecolor='none'))
+        
+        x_ground = np.linspace(-1, 3, 5)
+        y_ground = np.linspace(-1, 4, 7)
+        X_ground, Y_ground = np.meshgrid(x_ground, y_ground)
+        Z_ground = np.ones_like(X_ground) * -2.5
+        self.ax.plot_surface(X_ground, Y_ground, Z_ground, alpha=0.2, color='brown')
+        
+        for p, coords in points.items():
+            if p in self.underground_points:
+                self.ax.scatter(coords[0], coords[1], coords[2], color='gray', s=80, alpha=0.7, zorder=10)
+            else:
+                self.ax.scatter(coords[0], coords[1], coords[2], color='black', s=80, zorder=10)
+            
+            offset = 0.1
+            label_x = coords[0]
+            label_y = coords[1]
+            label_z = coords[2] + offset
+            
+            self.ax.text(label_x, label_y, label_z, p, fontsize=7.5, fontweight='bold', ha='center', va='center',
+                    bbox=dict(facecolor='white', alpha=0.9, pad=2, edgecolor='black'), zorder=11)
+        
+        self.ax.grid(True)
+        self.ax.set_xlabel('X (m)')
+        self.ax.set_ylabel('Y (m)')
+        self.ax.set_zlabel('Z (m)')
+        self.ax.set_title('3D Scaffolding Structure')
+        self.ax.view_init(elev=25, azim=angle)
+        self.ax.set_xlim(-1, 3)
+        self.ax.set_ylim(-1, 4)
+        self.ax.set_zlim(-4, 1)
+        
+        return self.ax
+    
+    def show(self):
+        plt.tight_layout()
+        plt.show()
 
 
 if __name__ == "__main__":
-    static_fig, static_ax = create_static_plot(show_distances=True)
-    plt.show()
-
-    #auto spining
-    #animated_fig, anim = create_animated_plot(show_distances=False)
-    #plt.show()
+    viz = ScaffoldingVisualization()
+    viz.show()
+    
+    # Uncomment to use animated version with button
+    #animated_viz = AnimatedScaffoldingVisualization()
+    #animated_viz.show()
