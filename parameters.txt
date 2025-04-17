@@ -1,0 +1,41 @@
+(vertical) AB  -> 3.5 meter,
+(vertical) A'B' -> 3.5 meter,
+
+(vertical) AE -> 2.5 meter,
+(vertical) A'E' -> 2.5 meter,
+
+(vertical) CE -> 1.5 meter,
+(vertical) C'E' -> 1.5 meter,
+
+(vertical) CX -> 2.1 meter,
+(vertical) C'X' -> 2.1 meter,
+
+(vertical) EX -> 0.6 meter,
+(vertical) E'X' -> 0.6 meter,
+
+(tilted) CF -> 2.5 meter (close a angle of 36.87° whit the ground),
+(tilted) C'F' -> 2.5 meter (close a angle of 36.87° whit the ground),
+
+(tilted) FD  -> 1 meter,
+(tilted) F'D'  -> 1 meter,
+
+(tilted) CD -> 3.5 meter,
+(tilted) C'D' -> 3.5 meter,
+
+(horizontal) EF -> 2 meter,
+(horizontal) E'F' -> 2 meter,
+
+(horizontal) XD -> 2.8 meter,
+(horizontal) X'D' -> 2.8 meter,
+
+(
+	(CDX > 36.87°, CXD > 90°, DCX > 53,13°),
+	(E, E', F and F' point is the "gound" level),
+	(
+		[ABCEX are points on "one line" (AB 3.5 meter (main line))],
+		[A'B'C'E'X' same poins on one line (A'B' 3.5 meter (2'nd main line))],
+	)
+ 	(B, B', X, X', D, D' are underground points),
+	(AA', BB', CC', DD', EE', FF', and XX' are -> 2 meters apart)
+	(CD and C'D' is a tilted line, F and F' point are on it. F and F' close a angle of 36.87° whit the ground)
+)
