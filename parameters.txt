@@ -7,11 +7,11 @@ Base info:
 	(
 		[	
 			ABCEX are points on "one line", 
-			AB (line/rod) 3.5 meter {main line(rod 1)}.
+			AB (line/rod) 3.5 meter {main line (rod 1)}.
 		],
 		[
 			A'B'C'E'X' are poins on one line,
-			A'B' (line/rod) 3.5 meter {2'nd main line (rod 2)}.
+			A'B' (line/rod) 3.5 meter {2nd main line (rod 2)}.
 		],
 	)
 	[
