@@ -1,3 +1,28 @@
+Base info:
+{
+	(CDX > 36.87°, CXD > 90°, DCX > 53,13°),
+	(E, E', F and F' point is the "gound" level),
+ 	(B, B', X, X', D, D' are underground points),
+	(AA', BB', CC', DD', EE', FF', and XX' are -> 2 meters apart),
+	(
+		[	
+			ABCEX are points on "one line", 
+			AB (line/rod) 3.5 meter {main line(rod 1)}.
+		],
+		[
+			A'B'C'E'X' are poins on one line,
+			A'B' (line/rod) 3.5 meter {2'nd main line (rod 2)}.
+		],
+	)
+	[
+		CD and C'D' is a tilted line/rod,
+		F and F' point are on it, 
+		F and F' close a angle of 36.87° whit the ground.
+	]
+}
+
+(horizontal) AA' -> 2 meter (rod 5),
+
 (vertical) AB  -> 3.5 meter,
 (vertical) A'B' -> 3.5 meter,
 
@@ -30,17 +55,3 @@
 
 (horizontal) XD -> 2.8 meter,
 (horizontal) X'D' -> 2.8 meter,
-
-(horizontal) AA' -> 2 meter (rod 5),
-
-(
-	(CDX > 36.87°, CXD > 90°, DCX > 53,13°),
-	(E, E', F and F' point is the "gound" level),
-	(
-		[ABCEX are points on "one line" (AB 3.5 meter (main line (rod 1)))],
-		[A'B'C'E'X' "same", poins on one line (A'B' 3.5 meter (2'nd main line (rod 2)))],
-	)
- 	(B, B', X, X', D, D' are underground points),
-	(AA', BB', CC', DD', EE', FF', and XX' are -> 2 meters apart)
-	(CD and C'D' is a tilted line, F and F' point are on it. F and F' close a angle of 36.87° whit the ground)
-)
