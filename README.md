@@ -42,7 +42,7 @@ python main.py
 
 The program will display:
 1. A static view of the scaffolding structure
-2. An animated rotating view (after closing the static view)
+2. An animated rotating view (It is currently commented out, the comment must be removed from the code for this to work.)
 
 ## Input Parameters
 
