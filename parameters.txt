@@ -13,8 +13,11 @@
 (vertical) EX -> 0.6 meter,
 (vertical) E'X' -> 0.6 meter,
 
-(tilted) CF -> 2.5 meter (close a angle of 36.87° whit the ground),
-(tilted) C'F' -> 2.5 meter (close a angle of 36.87° whit the ground),
+(vertical) XB -> 0.4 meter,
+(vertical) X'B' -> 0.4 meter,
+
+(tilted) CF -> 2.5 meter (close a angle of 36.87° whit the ground (rod 3)),
+(tilted) C'F' -> 2.5 meter (close a angle of 36.87° whit the ground (rod 4)),
 
 (tilted) FD  -> 1 meter,
 (tilted) F'D'  -> 1 meter,
@@ -28,12 +31,14 @@
 (horizontal) XD -> 2.8 meter,
 (horizontal) X'D' -> 2.8 meter,
 
+(horizontal) AA' -> 2 meter (rod 5),
+
 (
 	(CDX > 36.87°, CXD > 90°, DCX > 53,13°),
 	(E, E', F and F' point is the "gound" level),
 	(
-		[ABCEX are points on "one line" (AB 3.5 meter (main line))],
-		[A'B'C'E'X' same poins on one line (A'B' 3.5 meter (2'nd main line))],
+		[ABCEX are points on "one line" (AB 3.5 meter (main line (rod 1)))],
+		[A'B'C'E'X' "same", poins on one line (A'B' 3.5 meter (2'nd main line (rod 2)))],
 	)
  	(B, B', X, X', D, D' are underground points),
 	(AA', BB', CC', DD', EE', FF', and XX' are -> 2 meters apart)
