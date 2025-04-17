@@ -78,10 +78,6 @@ To modify the scaffolding parameters:
 1. Edit the measurements at the beginning of `main.py`
 2. Run the program to visualize the updated structure
 
-## License
-
-[MIT License](LICENSE)
-
 ## Acknowledgments
 
 - Built using the Matplotlib 3D toolkit
